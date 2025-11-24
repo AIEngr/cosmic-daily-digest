@@ -116,6 +116,15 @@ def main():
     # --- Fetch Data ---
     data = fetch_data(WEBHOOK_URL)
 
+    # --- DEBUGGING AID START ---
+    # Add a checkbox to show the raw JSON data received from n8n for debugging
+    if st.checkbox("Show Raw Webhook Data (for debugging temperature/windspeed issues)", value=False):
+        st.subheader("Raw JSON Data Received")
+        st.json(data)
+        st.warning("If Temperature/Wind Speed are missing, check the key names in the 'weather' section of the JSON above. They must be exactly 'temperature' and 'windspeed'.")
+    # --- DEBUGGING AID END ---
+
+
     # --- Validate Data Structure ---
     if not data or 'apod' not in data or 'weather' not in data:
         st.error("Data structure invalid. Ensure your n8n workflow returns 'apod' and 'weather' objects.")
@@ -160,13 +169,20 @@ def main():
     # Use columns for weather metrics
     col1, col2, col3 = st.columns(3)
 
+    # Note: The keys 'temperature' and 'windspeed' MUST match the final output 
+    # structure of your n8n workflow (the last node before the Webhook Response).
+
     with col1:
-        temp = f"{weather.get('temperature', '--')}°C" if weather.get('temperature') else '--'
-        st.metric(label="Temperature", value=temp, delta_color="off")
+        # Safely extract temperature and format the string
+        temp_value = weather.get('temperature')
+        temp_display = f"{temp_value}°C" if temp_value is not None else '--'
+        st.metric(label="Temperature", value=temp_display, delta_color="off")
 
     with col2:
-        wind = f"{weather.get('windspeed', '--')} km/h" if weather.get('windspeed') else '--'
-        st.metric(label="Wind Speed", value=wind, delta_color="off")
+        # Safely extract windspeed and format the string
+        wind_value = weather.get('windspeed')
+        wind_display = f"{wind_value} km/h" if wind_value is not None else '--'
+        st.metric(label="Wind Speed", value=wind_display, delta_color="off")
 
     with col3:
         local_time = format_time(weather.get('time'))
