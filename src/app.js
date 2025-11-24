@@ -7,7 +7,7 @@ function App() {
   const [error, setError] = useState(null);
 
   // ⚠️ IMPORTANT: REPLACE THIS PLACEHOLDER URL WITH YOUR ACTUAL N8N WEBHOOK URL
-  const WEBHOOK_URL = 'https://[YOUR-N8N-INSTANCE-URL]/webhook/cosmic-digest';
+  const WEBHOOK_URL = WEBHOOK_URL;
 
   // Helper to format ISO 8601 time
   const formatTime = (isoTime) => {
@@ -113,5 +113,6 @@ function App() {
     </div>
   );
 }
+
 
 export default App;
